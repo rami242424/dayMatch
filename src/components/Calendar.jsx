@@ -1,50 +1,25 @@
 import { useEffect, useState } from 'react'
+import {
+  WEEKDAYS,
+  STATUSES,
+  STATUS_MARK,
+  STATUS_LABEL,
+  loadAllSelections,
+  saveAllSelections,
+  formatDate,
+  buildMonthGrid,
+} from '../lib/calendarData'
 
-const WEEKDAYS = ['일', '월', '화', '수', '목', '금', '토']
-
-const STATUSES = ['no', 'ok', 'good']
-const STATUS_MARK = { no: '✕', ok: '△', good: '◎' }
-const STATUS_LABEL = { no: '안되는날', ok: '괜찮은날', good: '좋은날' }
-
-const SELECTIONS_KEY = 'daymatch:selections'
-
-function loadSelections() {
-  try {
-    const raw = localStorage.getItem(SELECTIONS_KEY)
-    return raw ? JSON.parse(raw) : {}
-  } catch {
-    return {}
-  }
-}
-
-function formatDate(year, month, day) {
-  const mm = String(month + 1).padStart(2, '0')
-  const dd = String(day).padStart(2, '0')
-  return `${year}-${mm}-${dd}`
-}
-
-function buildMonthGrid(year, month) {
-  const firstWeekday = new Date(year, month, 1).getDay()
-  const daysInMonth = new Date(year, month + 1, 0).getDate()
-
-  const cells = []
-  for (let i = 0; i < firstWeekday; i++) {
-    cells.push(null)
-  }
-  for (let day = 1; day <= daysInMonth; day++) {
-    cells.push(day)
-  }
-  return cells
-}
-
-function Calendar({ name, onChangeName }) {
-  const [selections, setSelections] = useState(loadSelections)
+function Calendar({ name, onChangeName, onShowResults }) {
+  const [allSelections, setAllSelections] = useState(loadAllSelections)
   const [activeMode, setActiveMode] = useState(null)
   const [viewDate, setViewDate] = useState(() => new Date())
 
   useEffect(() => {
-    localStorage.setItem(SELECTIONS_KEY, JSON.stringify(selections))
-  }, [selections])
+    saveAllSelections(allSelections)
+  }, [allSelections])
+
+  const mySelections = allSelections[name] || {}
 
   const today = new Date()
   const year = viewDate.getFullYear()
@@ -66,29 +41,35 @@ function Calendar({ name, onChangeName }) {
   function handleDayClick(day) {
     if (!activeMode) return
     const dateStr = formatDate(year, month, day)
-    setSelections((prev) => {
-      const next = { ...prev }
-      if (next[dateStr] === activeMode) {
-        delete next[dateStr]
+    setAllSelections((prev) => {
+      const personSelections = { ...(prev[name] || {}) }
+      if (personSelections[dateStr] === activeMode) {
+        delete personSelections[dateStr]
       } else {
-        next[dateStr] = activeMode
+        personSelections[dateStr] = activeMode
       }
-      return next
+      return { ...prev, [name]: personSelections }
     })
   }
 
   return (
     <div className="calendar">
-      <div className="calendar-header">
-        <button type="button" className="change-name-btn" onClick={onChangeName}>
-          이름 변경
+      <div className="top-nav">
+        <button type="button" className="top-nav-btn" onClick={onChangeName}>
+          ← 처음으로
+        </button>
+        <span className="name-badge-text">
+          <strong>{name}</strong> 님 일정
+        </span>
+        <button type="button" className="top-nav-btn primary" onClick={onShowResults}>
+          결과 보기
         </button>
       </div>
       <div className="month-nav">
         <button type="button" className="nav-btn" onClick={goToPrevMonth}>
           ◀ 이전 달
         </button>
-        <h1>{name}님, {year}년 {month + 1}월</h1>
+        <h1>{year}년 {month + 1}월</h1>
         <button type="button" className="nav-btn" onClick={goToNextMonth}>
           다음 달 ▶
         </button>
@@ -119,7 +100,7 @@ function Calendar({ name, onChangeName }) {
             return <div key={`blank-${i}`} className="day empty" />
           }
           const dateStr = formatDate(year, month, day)
-          const status = selections[dateStr]
+          const status = mySelections[dateStr]
           const classNames = ['day']
           if (isCurrentMonth && day === todayDate) classNames.push('today')
           if (status) classNames.push(`status-${status}`)
