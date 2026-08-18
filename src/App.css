@@ -388,6 +388,11 @@
   font-size: 19px;
   font-weight: 700;
   margin: 0 0 10px;
+  color: var(--text-h);
+}
+
+.result-group h2 * {
+  color: inherit;
 }
 
 .group-bar {
