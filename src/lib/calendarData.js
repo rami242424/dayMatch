@@ -1,63 +1,57 @@
+import { supabase } from './supabaseClient'
+
 export const WEEKDAYS = ['일', '월', '화', '수', '목', '금', '토']
 
 export const STATUSES = ['no', 'ok', 'good']
 export const STATUS_MARK = { no: '✕', ok: '△', good: '◎' }
 export const STATUS_LABEL = { no: '바빠요', ok: '괜찮아요', good: '좋아요' }
 
-// 모든 방의 데이터가 이 키 하나 아래에 { [방코드]: { [이름]: { [날짜]: status } } } 형태로 저장됨.
-// 저장소를 서버 기반으로 바꿀 때는 이 파일의 load/save 함수만 교체하면 됨.
-const ROOMS_KEY = 'daymatch:rooms'
+// 방 데이터는 Supabase의 selections 테이블(room_code / name / date / level)에 저장됨.
+// 저장소를 다른 백엔드로 바꿀 때는 이 파일의 load/upsert/delete 함수 내부만 교체하면 됨.
 
 function isPlainObject(value) {
   return typeof value === 'object' && value !== null && !Array.isArray(value)
 }
 
-// Drops anything that doesn't match { [name]: { [dateStr]: status } },
-// e.g. leftover/corrupted data from an older storage format.
-function sanitizeRoomSelections(value) {
-  if (!isPlainObject(value)) return {}
+// { [name]: { [dateStr]: status } } 형태로 이 방의 전체 선택 데이터를 불러옴.
+export async function loadRoomSelections(roomCode) {
+  const { data, error } = await supabase
+    .from('selections')
+    .select('name, date, level')
+    .eq('room_code', roomCode)
 
-  const clean = {}
-  for (const person of Object.keys(value)) {
-    const personSelections = value[person]
-    if (!isPlainObject(personSelections)) continue
+  if (error) throw error
 
-    const cleanPersonSelections = {}
-    for (const dateStr of Object.keys(personSelections)) {
-      const status = personSelections[dateStr]
-      if (STATUSES.includes(status)) {
-        cleanPersonSelections[dateStr] = status
-      }
-    }
-    clean[person] = cleanPersonSelections
+  const selections = {}
+  for (const row of data) {
+    if (!STATUSES.includes(row.level)) continue
+    if (!selections[row.name]) selections[row.name] = {}
+    selections[row.name][row.date] = row.level
   }
-  return clean
+  return selections
 }
 
-function loadAllRooms() {
-  try {
-    const raw = localStorage.getItem(ROOMS_KEY)
-    if (!raw) return {}
-    const parsed = JSON.parse(raw)
-    return isPlainObject(parsed) ? parsed : {}
-  } catch {
-    return {}
-  }
+// 한 사람의 한 날짜 선택을 저장. (room_code, name, date) unique 제약 덕분에
+// 같은 날짜를 다시 찍으면 upsert로 자연스럽게 덮어써짐.
+export async function upsertSelection(roomCode, name, dateStr, status) {
+  const { error } = await supabase
+    .from('selections')
+    .upsert(
+      { room_code: roomCode, name, date: dateStr, level: status },
+      { onConflict: 'room_code,name,date' },
+    )
+  if (error) throw error
 }
 
-function saveAllRooms(allRooms) {
-  localStorage.setItem(ROOMS_KEY, JSON.stringify(allRooms))
-}
-
-export function loadRoomSelections(roomCode) {
-  const allRooms = loadAllRooms()
-  return sanitizeRoomSelections(allRooms[roomCode])
-}
-
-export function saveRoomSelections(roomCode, selections) {
-  const allRooms = loadAllRooms()
-  allRooms[roomCode] = selections
-  saveAllRooms(allRooms)
+// 선택 해제 시 그 행을 삭제.
+export async function deleteSelection(roomCode, name, dateStr) {
+  const { error } = await supabase
+    .from('selections')
+    .delete()
+    .eq('room_code', roomCode)
+    .eq('name', name)
+    .eq('date', dateStr)
+  if (error) throw error
 }
 
 // 방마다 다른 이름을 쓸 수 있도록 { [방코드]: 이름 } 형태로 따로 저장.

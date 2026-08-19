@@ -140,6 +140,17 @@
   outline-offset: 2px;
 }
 
+.status-message {
+  font-size: 15px;
+  color: var(--text);
+  padding: 40px 0;
+}
+
+.status-message-error {
+  color: #dc2626;
+  padding: 8px 0 16px;
+}
+
 .calendar {
   width: 100%;
   max-width: 420px;

@@ -1,12 +1,50 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { loadRoomSelections } from '../lib/calendarData'
 import ResultsCalendarView from './ResultsCalendarView'
 import ResultsListView from './ResultsListView'
 
 function Results({ roomCode, onBack, onChangeName }) {
   const [viewMode, setViewMode] = useState('calendar')
-  const [allSelections] = useState(() => loadRoomSelections(roomCode))
+  const [allSelections, setAllSelections] = useState({})
+  const [loading, setLoading] = useState(true)
+  const [error, setError] = useState(null)
+
+  useEffect(() => {
+    let cancelled = false
+    setLoading(true)
+    setError(null)
+    loadRoomSelections(roomCode)
+      .then((selections) => {
+        if (!cancelled) setAllSelections(selections)
+      })
+      .catch(() => {
+        if (!cancelled) setError('데이터를 불러오지 못했어요. 새로고침해서 다시 시도해주세요.')
+      })
+      .finally(() => {
+        if (!cancelled) setLoading(false)
+      })
+    return () => {
+      cancelled = true
+    }
+  }, [roomCode])
+
   const participants = Object.keys(allSelections)
+
+  if (loading) {
+    return (
+      <div className="calendar">
+        <p className="status-message">불러오는 중...</p>
+      </div>
+    )
+  }
+
+  if (error) {
+    return (
+      <div className="calendar">
+        <p className="status-message status-message-error">{error}</p>
+      </div>
+    )
+  }
 
   return (
     <div className="calendar">

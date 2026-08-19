@@ -5,20 +5,39 @@ import {
   STATUS_MARK,
   STATUS_LABEL,
   loadRoomSelections,
-  saveRoomSelections,
+  upsertSelection,
+  deleteSelection,
   formatDate,
   buildMonthGrid,
 } from '../lib/calendarData'
 
 function Calendar({ roomCode, name, onChangeName, onShowResults }) {
-  const [allSelections, setAllSelections] = useState(() => loadRoomSelections(roomCode))
+  const [allSelections, setAllSelections] = useState({})
+  const [loading, setLoading] = useState(true)
+  const [loadError, setLoadError] = useState(null)
+  const [saveError, setSaveError] = useState(null)
   const [activeMode, setActiveMode] = useState(null)
   const [viewDate, setViewDate] = useState(() => new Date())
   const [linkCopied, setLinkCopied] = useState(false)
 
   useEffect(() => {
-    saveRoomSelections(roomCode, allSelections)
-  }, [roomCode, allSelections])
+    let cancelled = false
+    setLoading(true)
+    setLoadError(null)
+    loadRoomSelections(roomCode)
+      .then((selections) => {
+        if (!cancelled) setAllSelections(selections)
+      })
+      .catch(() => {
+        if (!cancelled) setLoadError('데이터를 불러오지 못했어요. 새로고침해서 다시 시도해주세요.')
+      })
+      .finally(() => {
+        if (!cancelled) setLoading(false)
+      })
+    return () => {
+      cancelled = true
+    }
+  }, [roomCode])
 
   function handleCopyLink() {
     const url = `${window.location.origin}/r/${roomCode}`
@@ -46,18 +65,48 @@ function Calendar({ roomCode, name, onChangeName, onShowResults }) {
     setViewDate((prev) => new Date(prev.getFullYear(), prev.getMonth() + 1, 1))
   }
 
-  function handleDayClick(day) {
+  async function handleDayClick(day) {
     if (!activeMode) return
     const dateStr = formatDate(year, month, day)
+    const isUnselecting = mySelections[dateStr] === activeMode
+    const nextStatus = isUnselecting ? null : activeMode
+
     setAllSelections((prev) => {
       const personSelections = { ...(prev[name] || {}) }
-      if (personSelections[dateStr] === activeMode) {
+      if (nextStatus === null) {
         delete personSelections[dateStr]
       } else {
-        personSelections[dateStr] = activeMode
+        personSelections[dateStr] = nextStatus
       }
       return { ...prev, [name]: personSelections }
     })
+
+    setSaveError(null)
+    try {
+      if (nextStatus === null) {
+        await deleteSelection(roomCode, name, dateStr)
+      } else {
+        await upsertSelection(roomCode, name, dateStr, nextStatus)
+      }
+    } catch {
+      setSaveError('저장하지 못했어요. 다시 시도해주세요.')
+    }
+  }
+
+  if (loading) {
+    return (
+      <div className="calendar">
+        <p className="status-message">불러오는 중...</p>
+      </div>
+    )
+  }
+
+  if (loadError) {
+    return (
+      <div className="calendar">
+        <p className="status-message status-message-error">{loadError}</p>
+      </div>
+    )
   }
 
   return (
@@ -76,6 +125,7 @@ function Calendar({ roomCode, name, onChangeName, onShowResults }) {
       <button type="button" className="copy-link-btn" onClick={handleCopyLink}>
         {linkCopied ? '복사됨 ✓' : '🔗 링크 복사'}
       </button>
+      {saveError && <p className="status-message status-message-error">{saveError}</p>}
       <div className="month-nav">
         <button type="button" className="nav-btn" onClick={goToPrevMonth}>
           ◀ 이전 달
