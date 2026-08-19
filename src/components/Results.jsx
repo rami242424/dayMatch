@@ -1,11 +1,11 @@
 import { useState } from 'react'
-import { loadAllSelections } from '../lib/calendarData'
+import { loadRoomSelections } from '../lib/calendarData'
 import ResultsCalendarView from './ResultsCalendarView'
 import ResultsListView from './ResultsListView'
 
-function Results({ onBack, onChangeName }) {
+function Results({ roomCode, onBack, onChangeName }) {
   const [viewMode, setViewMode] = useState('calendar')
-  const [allSelections] = useState(loadAllSelections)
+  const [allSelections] = useState(() => loadRoomSelections(roomCode))
   const participants = Object.keys(allSelections)
 
   return (

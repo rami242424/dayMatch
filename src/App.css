@@ -45,6 +45,101 @@
   border-color: var(--accent-border);
 }
 
+.home {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 20px;
+  width: 100%;
+  max-width: 340px;
+}
+
+.home-create-btn {
+  font-size: 16px;
+  font-family: inherit;
+  font-weight: 600;
+  padding: 12px 28px;
+  border-radius: 10px;
+  color: var(--accent);
+  background: var(--accent-bg);
+  border: 2px solid var(--accent-border);
+  cursor: pointer;
+  width: 100%;
+  min-height: 44px;
+  transition: border-color 0.2s;
+}
+
+.home-create-btn:hover {
+  border-color: var(--accent);
+}
+
+.home-join-form {
+  display: flex;
+  gap: 8px;
+  width: 100%;
+}
+
+.home-join-form input {
+  flex: 1;
+  min-width: 0;
+  font-size: 15px;
+  padding: 10px 12px;
+  min-height: 44px;
+  border-radius: 8px;
+  border: 1px solid var(--border);
+  background: var(--bg);
+  color: var(--text-h);
+  box-sizing: border-box;
+}
+
+.home-join-form input:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
+
+.home-join-form button {
+  font-size: 14px;
+  font-family: inherit;
+  padding: 8px 16px;
+  min-height: 44px;
+  border-radius: 8px;
+  border: 1px solid var(--border);
+  background: none;
+  color: var(--text-h);
+  cursor: pointer;
+  white-space: nowrap;
+  transition: border-color 0.2s;
+}
+
+.home-join-form button:hover {
+  border-color: var(--accent-border);
+}
+
+.copy-link-btn {
+  font-size: 13px;
+  font-family: inherit;
+  padding: 6px 14px;
+  min-height: 44px;
+  border-radius: 8px;
+  border: 1px solid var(--border);
+  background: none;
+  color: var(--text);
+  cursor: pointer;
+  align-self: center;
+  margin-bottom: 20px;
+  transition: background 0.2s, border-color 0.2s;
+}
+
+.copy-link-btn:hover {
+  background: var(--code-bg);
+  border-color: var(--accent-border);
+}
+
+.copy-link-btn:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
+
 .calendar {
   width: 100%;
   max-width: 420px;

@@ -4,16 +4,17 @@ export const STATUSES = ['no', 'ok', 'good']
 export const STATUS_MARK = { no: '✕', ok: '△', good: '◎' }
 export const STATUS_LABEL = { no: '바빠요', ok: '괜찮아요', good: '좋아요' }
 
-const SELECTIONS_KEY = 'daymatch:selections'
+// 모든 방의 데이터가 이 키 하나 아래에 { [방코드]: { [이름]: { [날짜]: status } } } 형태로 저장됨.
+// 저장소를 서버 기반으로 바꿀 때는 이 파일의 load/save 함수만 교체하면 됨.
+const ROOMS_KEY = 'daymatch:rooms'
 
 function isPlainObject(value) {
   return typeof value === 'object' && value !== null && !Array.isArray(value)
 }
 
 // Drops anything that doesn't match { [name]: { [dateStr]: status } },
-// e.g. leftover data from the old flat { [dateStr]: status } format that
-// used to live under this same localStorage key.
-function sanitizeAllSelections(value) {
+// e.g. leftover/corrupted data from an older storage format.
+function sanitizeRoomSelections(value) {
   if (!isPlainObject(value)) return {}
 
   const clean = {}
@@ -33,17 +34,62 @@ function sanitizeAllSelections(value) {
   return clean
 }
 
-export function loadAllSelections() {
+function loadAllRooms() {
   try {
-    const raw = localStorage.getItem(SELECTIONS_KEY)
-    return raw ? sanitizeAllSelections(JSON.parse(raw)) : {}
+    const raw = localStorage.getItem(ROOMS_KEY)
+    if (!raw) return {}
+    const parsed = JSON.parse(raw)
+    return isPlainObject(parsed) ? parsed : {}
   } catch {
     return {}
   }
 }
 
-export function saveAllSelections(allSelections) {
-  localStorage.setItem(SELECTIONS_KEY, JSON.stringify(allSelections))
+function saveAllRooms(allRooms) {
+  localStorage.setItem(ROOMS_KEY, JSON.stringify(allRooms))
+}
+
+export function loadRoomSelections(roomCode) {
+  const allRooms = loadAllRooms()
+  return sanitizeRoomSelections(allRooms[roomCode])
+}
+
+export function saveRoomSelections(roomCode, selections) {
+  const allRooms = loadAllRooms()
+  allRooms[roomCode] = selections
+  saveAllRooms(allRooms)
+}
+
+// 방마다 다른 이름을 쓸 수 있도록 { [방코드]: 이름 } 형태로 따로 저장.
+const ROOM_NAMES_KEY = 'daymatch:room-names'
+// 가장 최근에 입력한 이름. 새 방에 처음 들어갔을 때 기본값으로 사용.
+const LAST_NAME_KEY = 'daymatch:last-name'
+
+function loadAllRoomNames() {
+  try {
+    const raw = localStorage.getItem(ROOM_NAMES_KEY)
+    if (!raw) return {}
+    const parsed = JSON.parse(raw)
+    return isPlainObject(parsed) ? parsed : {}
+  } catch {
+    return {}
+  }
+}
+
+export function loadRoomName(roomCode) {
+  const roomNames = loadAllRoomNames()
+  return typeof roomNames[roomCode] === 'string' ? roomNames[roomCode] : ''
+}
+
+export function saveRoomName(roomCode, name) {
+  const roomNames = loadAllRoomNames()
+  roomNames[roomCode] = name
+  localStorage.setItem(ROOM_NAMES_KEY, JSON.stringify(roomNames))
+  localStorage.setItem(LAST_NAME_KEY, name)
+}
+
+export function loadLastName() {
+  return localStorage.getItem(LAST_NAME_KEY) || ''
 }
 
 export function formatDate(year, month, day) {

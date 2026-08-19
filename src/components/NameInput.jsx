@@ -1,7 +1,7 @@
 import { useState } from 'react'
 
-function NameInput({ onSubmit }) {
-  const [name, setName] = useState('')
+function NameInput({ onSubmit, defaultValue = '' }) {
+  const [name, setName] = useState(defaultValue)
 
   function handleSubmit(e) {
     e.preventDefault()

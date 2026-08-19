@@ -4,20 +4,28 @@ import {
   STATUSES,
   STATUS_MARK,
   STATUS_LABEL,
-  loadAllSelections,
-  saveAllSelections,
+  loadRoomSelections,
+  saveRoomSelections,
   formatDate,
   buildMonthGrid,
 } from '../lib/calendarData'
 
-function Calendar({ name, onChangeName, onShowResults }) {
-  const [allSelections, setAllSelections] = useState(loadAllSelections)
+function Calendar({ roomCode, name, onChangeName, onShowResults }) {
+  const [allSelections, setAllSelections] = useState(() => loadRoomSelections(roomCode))
   const [activeMode, setActiveMode] = useState(null)
   const [viewDate, setViewDate] = useState(() => new Date())
+  const [linkCopied, setLinkCopied] = useState(false)
 
   useEffect(() => {
-    saveAllSelections(allSelections)
-  }, [allSelections])
+    saveRoomSelections(roomCode, allSelections)
+  }, [roomCode, allSelections])
+
+  function handleCopyLink() {
+    const url = `${window.location.origin}/r/${roomCode}`
+    navigator.clipboard.writeText(url)
+    setLinkCopied(true)
+    setTimeout(() => setLinkCopied(false), 1500)
+  }
 
   const mySelections = allSelections[name] || {}
 
@@ -65,6 +73,9 @@ function Calendar({ name, onChangeName, onShowResults }) {
           결과 보기
         </button>
       </div>
+      <button type="button" className="copy-link-btn" onClick={handleCopyLink}>
+        {linkCopied ? '복사됨 ✓' : '🔗 링크 복사'}
+      </button>
       <div className="month-nav">
         <button type="button" className="nav-btn" onClick={goToPrevMonth}>
           ◀ 이전 달
