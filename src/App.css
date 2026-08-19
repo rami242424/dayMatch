@@ -297,7 +297,7 @@
   color: #dc2626;
 }
 .mode-btn.mode-ok .mode-mark {
-  color: #16a34a;
+  color: #15803d;
 }
 .mode-btn.mode-good .mode-mark {
   color: #2563eb;
@@ -316,9 +316,9 @@
   color: #dc2626;
 }
 .mode-btn.mode-ok.active {
-  background: rgba(22, 163, 74, 0.14);
-  border-color: #16a34a;
-  color: #16a34a;
+  background: rgba(21, 128, 61, 0.14);
+  border-color: #15803d;
+  color: #15803d;
 }
 .mode-btn.mode-good.active {
   background: rgba(37, 99, 235, 0.14);
@@ -388,10 +388,10 @@
 }
 
 .day.status-ok {
-  background: rgba(22, 163, 74, 0.14);
+  background: rgba(21, 128, 61, 0.14);
 }
 .day.status-ok .day-mark {
-  color: #16a34a;
+  color: #15803d;
 }
 
 .day.status-good {
@@ -417,22 +417,33 @@
   margin-top: 2px;
 }
 
-.day.heat-1 {
-  background: #dbeafe;
+/* 0=아무도 못 오는 날(투표는 됨), 5=전원 가능. 투표 자체가 없는 날은 heat 클래스가 안 붙어서
+   배경/테두리가 전혀 없는 채로 남기 때문에 "0명 가능"과는 항상 구분됨. */
+.day[class*='heat-'] {
+  border-color: #3b82f6;
 }
-.day.heat-2 {
+.day.heat-0 {
   background: #93c5fd;
 }
-.day.heat-3 {
+.day.heat-1 {
   background: #60a5fa;
+}
+.day.heat-2 {
+  background: #3b82f6;
+}
+.day.heat-3 {
+  background: #2563eb;
+  border-color: #2563eb;
   color: #fff;
 }
 .day.heat-4 {
-  background: #3b82f6;
+  background: #1d4ed8;
+  border-color: #1d4ed8;
   color: #fff;
 }
 .day.heat-5 {
-  background: #1d4ed8;
+  background: #1e40af;
+  border-color: #1e40af;
   color: #fff;
 }
 .day[class*='heat-'] .day-badge {
@@ -469,7 +480,7 @@
   color: #dc2626;
 }
 .detail-ok span:first-child {
-  color: #16a34a;
+  color: #15803d;
 }
 .detail-good span:first-child {
   color: #2563eb;
@@ -561,7 +572,7 @@
 
 .available-count {
   font-weight: 700;
-  color: #3b82f6;
+  color: #2563eb;
 }
 
 .result-responded {
