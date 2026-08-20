@@ -21,10 +21,7 @@ https://day-match-lime.vercel.app
 
 | 입력 화면 | 결과 - 달력 | 결과 - 리스트 |
 | --- | --- | --- |
-| <img width="1763" height="981" alt="스크린샷_20-8-2026_18355_localhost" src="https://github.com/user-attachments/assets/7e4d1e76-f240-4447-8d5e-2fdb4bd6ccab" />
- | <img width="1763" height="826" alt="스크린샷_20-8-2026_18342_localhost" src="https://github.com/user-attachments/assets/a4a810ab-525a-471b-906e-1fb6177135d6" />
- | ![Uploading 스크린샷_20-8-2026_18310_localhost.jpeg…]()
- |
+| <img width="280" src="https://github.com/user-attachments/assets/7e4d1e76-f240-4447-8d5e-2fdb4bd6ccab" /> | <img width="280" src="https://github.com/user-attachments/assets/a4a810ab-525a-471b-906e-1fb6177135d6" /> | <img width="280" src="세번째_URL" /> |
 
 ---
 
