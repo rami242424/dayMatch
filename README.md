@@ -23,7 +23,6 @@ https://day-match-lime.vercel.app
 | --- | --- | --- |
 | <img width="100%" src="https://github.com/user-attachments/assets/7e4d1e76-f240-4447-8d5e-2fdb4bd6ccab" /> | <img width="100%" src="https://github.com/user-attachments/assets/a4a810ab-525a-471b-906e-1fb6177135d6" /> | <img width="100%" src="https://github.com/user-attachments/assets/d7a8ec2b-01be-462a-99ad-a3c43c269f9d" /> |
 
-
 ---
 
 ## 📌 주요 기능
@@ -51,7 +50,8 @@ https://day-match-lime.vercel.app
 | 백엔드 / DB | ![Supabase](https://img.shields.io/badge/Supabase-3FCF8E?style=flat-square&logo=supabase&logoColor=white) | 서버를 직접 만들지 않고 Postgres + 자동 생성 REST API 사용 |
 | 배포 | ![Vercel](https://img.shields.io/badge/Vercel-000000?style=flat-square&logo=vercel&logoColor=white) | GitHub 푸시 시 자동 배포 |
 
-> 상태 관리 라이브러리(Redux, Zustand 등)는 쓰지 않았다. 공유해야 할 상태가 방 하나의 선택 데이터뿐이라 `useState` 와 props 전달로 충분했다.
+> 상태 관리 라이브러리(Redux, Zustand 등)는 쓰지 않았습니다. 공유해야 할 상태가 방 하나의 선택 데이터뿐이라 `useState` 와 props 전달로 충분했습니다.
+
 ---
 
 ## 📁 프로젝트 구조
@@ -73,8 +73,8 @@ src/
 │   └── DateDetail.jsx            # 특정 날짜의 참여자별 상태 상세
 └── lib/
     ├── calendarData.js           # 데이터 읽기/쓰기를 모아둔 저장소 게이트웨이
-    ├── roomCode.js                # 헷갈리는 글자를 뺀 6자리 방 코드 생성
-    └── supabaseClient.js          # Supabase 클라이언트 초기화
+    ├── roomCode.js               # 헷갈리는 글자를 뺀 6자리 방 코드 생성
+    └── supabaseClient.js         # Supabase 클라이언트 초기화
 ```
 
 ---
@@ -83,7 +83,7 @@ src/
 
 ### 1. "안 되는 날"은 점수가 아니라 필터
 
-좋음 3 + 안됨 1과 좋음 2 + 안됨 0을 그냥 합산하면 둘 다 7점이 되어버리는데, 실제로는 한 명이라도 못 오면 그날은 약속이 성립하지 않는다. 그래서 "안됨"은 점수에 넣지 않고, 그룹을 나누는 필터로만 사용했다. 그룹 안에서는 가능 인원 수 → 좋아요 수 순으로 정렬한다.
+좋음 3 + 안됨 1과 좋음 2 + 안됨 0을 그냥 합산하면 둘 다 7점이 되어버립니다. 하지만 실제로는 한 명이라도 못 오면 그날은 약속이 성립하지 않죠. 그래서 "안됨"은 점수에 넣지 않고, 그룹을 나누는 필터로만 사용했습니다. 그룹 안에서는 가능 인원 수 → 좋아요 수 순으로 정렬합니다.
 
 ```js
 const GROUPS = [
@@ -103,7 +103,7 @@ rows.sort((a, b) => {
 
 ### 2. 날짜를 YYYY-MM-DD 문자열 키로
 
-인메모리 구조는 `{ 이름: { "2026-09-01": "good" } }` 형태다. 일(day) 숫자만 키로 쓰면 8월 20일과 9월 20일이 충돌하기 때문에 연-월-일을 통째로 문자열 키로 썼다. 이름을 바깥 키로 둔 이유는, 본인의 선택을 수정할 때 `allSelections[name]` 한 곳만 건드리면 되기 때문이다.
+인메모리 구조는 `{ 이름: { "2026-09-01": "good" } }` 형태입니다. 일(day) 숫자만 키로 쓰면 8월 20일과 9월 20일이 충돌하기 때문에, 연-월-일을 통째로 문자열 키로 썼습니다. 이름을 바깥 키로 둔 이유는 본인의 선택을 수정할 때 `allSelections[name]` 한 곳만 건드리면 되기 때문입니다.
 
 ```js
 export async function loadRoomSelections(roomCode) {
@@ -126,7 +126,7 @@ export async function loadRoomSelections(roomCode) {
 
 ### 3. upsert + unique 제약으로 중복 방지
 
-`(room_code, name, date)`에 unique 제약을 걸어두고, 저장할 때 `onConflict`를 지정한 upsert를 쓴다. 같은 날짜를 다시 찍어도 행이 새로 늘지 않고 기존 행이 덮어써진다.
+`(room_code, name, date)`에 unique 제약을 걸어두고, 저장할 때 `onConflict`를 지정한 upsert를 씁니다. 같은 날짜를 다시 찍어도 행이 새로 늘지 않고 기존 행이 덮어써집니다.
 
 ```js
 export async function upsertSelection(roomCode, name, dateStr, status) {
@@ -142,13 +142,14 @@ export async function upsertSelection(roomCode, name, dateStr, status) {
 
 ### 4. 낙관적 업데이트
 
-날짜를 찍을 때마다 서버 응답을 기다리면 클릭할 때마다 화면이 멈칫한다. 그래서 화면 상태를 먼저 바꾸고, 실제 저장 요청은 그 뒤에 보낸다. 요청이 실패하면 에러 메시지만 띄운다.
+날짜를 찍을 때마다 서버 응답을 기다리면 클릭할 때마다 화면이 멈칫합니다. 그래서 화면 상태를 먼저 바꾸고, 실제 저장 요청은 그 뒤에 보냅니다. 요청이 실패하면 에러 메시지만 띄웁니다.
 
 ```js
 async function handleDayClick(day) {
   if (!activeMode) return
   const dateStr = formatDate(year, month, day)
   if (dateStr < todayStr) return
+
   const isUnselecting = mySelections[dateStr] === activeMode
   const nextStatus = isUnselecting ? null : activeMode
 
@@ -177,7 +178,7 @@ async function handleDayClick(day) {
 
 ### 5. 색 + 기호 병행 표기
 
-적록 색각이상이 있으면 빨강/초록만으로는 상태를 구분하기 어렵다. 그래서 색을 쓰는 모든 곳에 기호(✕ △ ◎)를 함께 표시하도록 못박아뒀다.
+적록 색각이상이 있으면 빨강/초록만으로는 상태를 구분하기 어렵습니다. 그래서 색을 쓰는 모든 곳에 기호(✕ △ ◎)를 함께 표시하도록 못박아뒀습니다.
 
 ```js
 export const STATUS_MARK = { no: '✕', ok: '△', good: '◎' }
@@ -193,9 +194,10 @@ export const STATUS_MARK = { no: '✕', ok: '△', good: '◎' }
 ## 🐞 트러블슈팅
 
 **1. 배포 후 `/r/{코드}` 링크로 들어가면 404**
-- 문제: Vercel에 올린 뒤 방 링크로 직접 들어가면 404가 떴다.
-- 원인: 정적 서버는 요청 경로(`/r/abc123`)에 해당하는 파일을 찾는데, SPA는 빌드 결과물이 `index.html` 하나뿐이라 그 경로의 파일이 존재하지 않았다.
-- 해결: 모든 경로를 `index.html`로 돌려주는 rewrite 규칙을 추가했다.
+
+- 문제: Vercel에 올린 뒤 방 링크로 직접 들어가면 404가 떴습니다.
+- 원인: 정적 서버는 요청 경로(`/r/abc123`)에 해당하는 파일을 찾는데, SPA는 빌드 결과물이 `index.html` 하나뿐이라 그 경로의 파일이 존재하지 않았습니다.
+- 해결: 모든 경로를 `index.html`로 돌려주는 rewrite 규칙을 추가했습니다.
 
 ```json
 {
@@ -204,14 +206,16 @@ export const STATUS_MARK = { no: '✕', ok: '△', good: '◎' }
 ```
 
 **2. 개발자 도구 시뮬레이션에선 멀쩡한데 실제 폰 인앱 브라우저에서 레이아웃이 깨짐**
-- 문제: 크롬 개발자 도구의 모바일 시뮬레이션으로는 문제가 없었는데, 카카오톡 인앱 브라우저로 열면 레이아웃이 틀어졌다.
-- 원인: 인앱 브라우저는 엔진 버전이 낮아서 최신 CSS 속성 일부를 무시하거나 다르게 처리했다.
-- 해결: 시뮬레이터만 믿지 않고 실제 인앱 브라우저로 직접 열어서 확인하는 과정을 거쳤다.
+
+- 문제: 크롬 개발자 도구의 모바일 시뮬레이션으로는 문제가 없었는데, 카카오톡 인앱 브라우저로 열면 레이아웃이 틀어졌습니다.
+- 원인: 인앱 브라우저는 엔진 버전이 낮아서 최신 CSS 속성 일부를 무시하거나 다르게 처리했습니다.
+- 해결: 시뮬레이터만 믿지 않고 실제 인앱 브라우저로 직접 열어서 확인하는 과정을 거쳤습니다.
 
 **3. 폰에서 앱 색이 의도한 것과 다르게 보임**
-- 문제: 같은 화면인데 기기에 따라 색이 다르게 보인다는 얘기를 들었다.
-- 원인: `prefers-color-scheme`를 따라가고 있어서, 시스템이 다크 모드면 브라우저가 색을 자동으로 바꿔버렸다.
-- 해결: 라이트 테마를 명시적으로 고정했다.
+
+- 문제: 같은 화면인데 기기에 따라 색이 다르게 보인다는 얘기를 들었습니다.
+- 원인: `prefers-color-scheme`를 따라가고 있어서, 시스템이 다크 모드면 브라우저가 색을 자동으로 바꿔버렸습니다.
+- 해결: 라이트 테마를 명시적으로 고정했습니다.
 
 ```css
 :root {
@@ -232,7 +236,7 @@ export const STATUS_MARK = { no: '✕', ok: '△', good: '◎' }
 npm install
 ```
 
-프로젝트 루트에 `.env.local`을 만들고 Supabase 프로젝트의 URL과 publishable key를 넣는다.
+프로젝트 루트에 `.env.local`을 만들고 Supabase 프로젝트의 URL과 publishable key를 넣습니다.
 
 ```bash
 VITE_SUPABASE_URL=https://xxxxx.supabase.co
