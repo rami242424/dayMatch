@@ -1,4 +1,3 @@
-<img width="1763" height="981" alt="스크린샷_20-8-2026_18355_localhost" src="https://github.com/user-attachments/assets/1ab76d68-0ce8-4492-98bc-dd96a1b66715" />
 # 📅 dayMatch
 
 > 여러 명이 함께 되는 날짜를 표시해 공통으로 좋은 날을 찾는 웹앱
@@ -22,7 +21,8 @@ https://day-match-lime.vercel.app
 
 | 입력 화면 | 결과 - 달력 | 결과 - 리스트 |
 | --- | --- | --- |
-| (이미지 추가 예정) | (이미지 추가 예정) | (이미지 추가 예정) |
+| <img width="1763" height="981" alt="스크린샷_20-8-2026_18355_localhost" src="https://github.com/user-attachments/assets/7e4d1e76-f240-4447-8d5e-2fdb4bd6ccab" />
+ | (이미지 추가 예정) | (이미지 추가 예정) |
 
 ---
 
