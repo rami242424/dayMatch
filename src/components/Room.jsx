@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react'
-import { useParams } from 'react-router-dom'
+import { useNavigate, useParams } from 'react-router-dom'
 import NameInput from './NameInput'
 import Calendar from './Calendar'
 import Results from './Results'
@@ -9,12 +9,14 @@ import {
   loadLastName,
   checkNameTaken,
   loadRoomInfo,
+  recordRoomVisit,
+  updateRecentRoomTitle,
+  DEFAULT_ROOM_TITLE,
 } from '../lib/calendarData'
-
-const DEFAULT_ROOM_TITLE = '이름 없는 약속'
 
 function Room() {
   const { code: roomCode } = useParams()
+  const navigate = useNavigate()
   const [name, setName] = useState('')
   const [screen, setScreen] = useState('name') // 'name' | 'confirm' | 'input' | 'result'
   const [pendingName, setPendingName] = useState('')
@@ -27,10 +29,13 @@ function Room() {
 
   useEffect(() => {
     let cancelled = false
+    recordRoomVisit(roomCode)
     loadRoomInfo(roomCode).then((info) => {
       if (cancelled) return
-      setRoomTitle(info?.title || DEFAULT_ROOM_TITLE)
+      const title = info?.title || DEFAULT_ROOM_TITLE
+      setRoomTitle(title)
       setExpectedCount(info?.expectedCount ?? null)
+      updateRecentRoomTitle(roomCode, title)
     })
     return () => {
       cancelled = true
@@ -88,6 +93,7 @@ function Room() {
     return (
       <NameInput
         onSubmit={handleNameSubmit}
+        onExit={() => navigate('/')}
         defaultValue={defaultName}
         notice={notice}
         checking={checking}
@@ -99,6 +105,11 @@ function Room() {
   if (screen === 'confirm') {
     return (
       <div className="name-confirm">
+        <div className="screen-back-row">
+          <button type="button" className="top-nav-btn" onClick={() => navigate('/')}>
+            ← 처음으로
+          </button>
+        </div>
         <h1>이미 '{pendingName}'님이 참여 중이에요.</h1>
         <div className="name-confirm-actions">
           <button type="button" className="name-confirm-self" onClick={handleConfirmSelf}>

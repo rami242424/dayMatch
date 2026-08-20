@@ -40,6 +40,11 @@ function Results({
   if (loading) {
     return (
       <div className="calendar">
+        <div className="screen-back-row">
+          <button type="button" className="top-nav-btn" onClick={onChangeName}>
+            ← 처음으로
+          </button>
+        </div>
         <p className="status-message">불러오는 중...</p>
       </div>
     )
@@ -48,6 +53,11 @@ function Results({
   if (error) {
     return (
       <div className="calendar">
+        <div className="screen-back-row">
+          <button type="button" className="top-nav-btn" onClick={onChangeName}>
+            ← 처음으로
+          </button>
+        </div>
         <p className="status-message status-message-error">{error}</p>
       </div>
     )

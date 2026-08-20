@@ -57,10 +57,12 @@ function Calendar({ roomCode, roomTitle, expectedCount, name, onChangeName, onSh
   const isCurrentMonth =
     year === today.getFullYear() && month === today.getMonth()
   const todayDate = today.getDate()
+  const todayStr = formatDate(today.getFullYear(), today.getMonth(), todayDate)
 
   const cells = buildMonthGrid(year, month)
 
   function goToPrevMonth() {
+    if (isCurrentMonth) return
     setViewDate((prev) => new Date(prev.getFullYear(), prev.getMonth() - 1, 1))
   }
 
@@ -71,6 +73,7 @@ function Calendar({ roomCode, roomTitle, expectedCount, name, onChangeName, onSh
   async function handleDayClick(day) {
     if (!activeMode) return
     const dateStr = formatDate(year, month, day)
+    if (dateStr < todayStr) return
     const isUnselecting = mySelections[dateStr] === activeMode
     const nextStatus = isUnselecting ? null : activeMode
 
@@ -99,6 +102,11 @@ function Calendar({ roomCode, roomTitle, expectedCount, name, onChangeName, onSh
   if (loading) {
     return (
       <div className="calendar">
+        <div className="screen-back-row">
+          <button type="button" className="top-nav-btn" onClick={onChangeName}>
+            ← 처음으로
+          </button>
+        </div>
         <p className="status-message">불러오는 중...</p>
       </div>
     )
@@ -107,6 +115,11 @@ function Calendar({ roomCode, roomTitle, expectedCount, name, onChangeName, onSh
   if (loadError) {
     return (
       <div className="calendar">
+        <div className="screen-back-row">
+          <button type="button" className="top-nav-btn" onClick={onChangeName}>
+            ← 처음으로
+          </button>
+        </div>
         <p className="status-message status-message-error">{loadError}</p>
       </div>
     )
@@ -142,7 +155,12 @@ function Calendar({ roomCode, roomTitle, expectedCount, name, onChangeName, onSh
       </button>
       {saveError && <p className="status-message status-message-error">{saveError}</p>}
       <div className="month-nav">
-        <button type="button" className="nav-btn" onClick={goToPrevMonth}>
+        <button
+          type="button"
+          className="nav-btn"
+          onClick={goToPrevMonth}
+          disabled={isCurrentMonth}
+        >
           ◀ 이전 달
         </button>
         <h1>{year}년 {month + 1}월</h1>
@@ -177,9 +195,11 @@ function Calendar({ roomCode, roomTitle, expectedCount, name, onChangeName, onSh
           }
           const dateStr = formatDate(year, month, day)
           const status = mySelections[dateStr]
+          const isPast = dateStr < todayStr
           const classNames = ['day']
           if (isCurrentMonth && day === todayDate) classNames.push('today')
           if (status) classNames.push(`status-${status}`)
+          if (isPast) classNames.push('past')
 
           return (
             <button
@@ -187,6 +207,7 @@ function Calendar({ roomCode, roomTitle, expectedCount, name, onChangeName, onSh
               type="button"
               className={classNames.join(' ')}
               onClick={() => handleDayClick(day)}
+              disabled={isPast}
               title={status ? STATUS_LABEL[status] : undefined}
             >
               <span className="day-number">{day}</span>
