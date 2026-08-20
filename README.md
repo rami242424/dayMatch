@@ -1,3 +1,4 @@
+<img width="1763" height="981" alt="스크린샷_20-8-2026_18355_localhost" src="https://github.com/user-attachments/assets/1ab76d68-0ce8-4492-98bc-dd96a1b66715" />
 # 📅 dayMatch
 
 > 여러 명이 함께 되는 날짜를 표시해 공통으로 좋은 날을 찾는 웹앱
