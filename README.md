@@ -42,15 +42,16 @@ https://day-match-lime.vercel.app
 
 ## 🛠 기술 스택
 
-| 구분 | 기술 |
-| --- | --- |
-| 빌드 도구 | Vite |
-| 언어 | JavaScript (React 19) |
-| UI | React |
-| 라우팅 | React Router |
-| 백엔드 / DB | Supabase |
-| 배포 | Vercel |
+| 구분 | 기술 | 선택 이유 |
+| --- | --- | --- |
+| 빌드 도구 | ![Vite](https://img.shields.io/badge/Vite-646CFF?style=flat-square&logo=vite&logoColor=white) | 빠른 개발 서버와 HMR |
+| 언어 | ![JavaScript](https://img.shields.io/badge/JavaScript-F7DF1E?style=flat-square&logo=javascript&logoColor=black) | 타입 정의보다 화면 로직과 UX 판단에 집중 |
+| UI | ![React](https://img.shields.io/badge/React_19-61DAFB?style=flat-square&logo=react&logoColor=black) | 선택 상태를 컴포넌트 단위로 관리 |
+| 라우팅 | ![React Router](https://img.shields.io/badge/React_Router-CA4245?style=flat-square&logo=reactrouter&logoColor=white) | 방마다 고유 URL(`/r/:code`)이 필요 |
+| 백엔드 / DB | ![Supabase](https://img.shields.io/badge/Supabase-3FCF8E?style=flat-square&logo=supabase&logoColor=white) | 서버를 직접 만들지 않고 Postgres + 자동 생성 REST API 사용 |
+| 배포 | ![Vercel](https://img.shields.io/badge/Vercel-000000?style=flat-square&logo=vercel&logoColor=white) | GitHub 푸시 시 자동 배포 |
 
+> 상태 관리 라이브러리(Redux, Zustand 등)는 쓰지 않았다. 공유해야 할 상태가 방 하나의 선택 데이터뿐이라 `useState` 와 props 전달로 충분했다.
 ---
 
 ## 📁 프로젝트 구조
