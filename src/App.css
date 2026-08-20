@@ -15,9 +15,14 @@
   gap: 16px;
 }
 
+.name-form-input-wrap {
+  position: relative;
+  display: flex;
+}
+
 .name-form input {
   font-size: 18px;
-  padding: 10px 14px;
+  padding: 10px 44px 10px 14px;
   border-radius: 8px;
   border: 1px solid var(--border);
   background: var(--bg);
@@ -30,7 +35,41 @@
   outline-offset: 2px;
 }
 
-.name-form button {
+.name-form-clear-btn {
+  position: absolute;
+  top: 50%;
+  right: 8px;
+  transform: translateY(-50%);
+  width: 44px;
+  height: 44px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0;
+  padding: 0;
+  border: none;
+  background: transparent;
+  color: #6b7280;
+  cursor: pointer;
+  -webkit-appearance: none;
+  appearance: none;
+}
+
+.name-form-clear-btn span {
+  font-size: 16px;
+  line-height: 1;
+}
+
+.name-form-clear-btn:hover {
+  color: #4b5563;
+}
+
+.name-form-clear-btn:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
+
+.name-form > button {
   font-size: 16px;
   padding: 8px 20px;
   border-radius: 8px;
@@ -41,11 +80,11 @@
   transition: border-color 0.3s;
 }
 
-.name-form button:hover {
+.name-form > button:hover {
   border-color: var(--accent-border);
 }
 
-.name-form button:disabled {
+.name-form > button:disabled {
   opacity: 0.6;
   cursor: default;
 }

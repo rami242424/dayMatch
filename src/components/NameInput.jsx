@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useRef, useState } from 'react'
 
 const MAX_NAME_LENGTH = 10
 
@@ -11,12 +11,18 @@ function NameInput({
   error = null,
 }) {
   const [name, setName] = useState(defaultValue)
+  const inputRef = useRef(null)
 
   function handleSubmit(e) {
     e.preventDefault()
     const trimmed = name.trim()
     if (!trimmed) return
     onSubmit(trimmed)
+  }
+
+  function handleClear() {
+    setName('')
+    inputRef.current?.focus()
   }
 
   return (
@@ -29,14 +35,27 @@ function NameInput({
       <form className="name-form" onSubmit={handleSubmit}>
         <h1>이름을 입력해주세요</h1>
         {notice && <p className="name-form-notice">{notice}</p>}
-        <input
-          type="text"
-          value={name}
-          onChange={(e) => setName(e.target.value)}
-          placeholder="이름"
-          maxLength={MAX_NAME_LENGTH}
-          autoFocus
-        />
+        <div className="name-form-input-wrap">
+          <input
+            ref={inputRef}
+            type="text"
+            value={name}
+            onChange={(e) => setName(e.target.value)}
+            placeholder="이름"
+            maxLength={MAX_NAME_LENGTH}
+            autoFocus
+          />
+          {name && (
+            <button
+              type="button"
+              className="name-form-clear-btn"
+              aria-label="이름 지우기"
+              onClick={handleClear}
+            >
+              <span aria-hidden="true">✕</span>
+            </button>
+          )}
+        </div>
         {error && <p className="status-message-error">{error}</p>}
         <button type="submit" disabled={checking}>
           {checking ? '확인 중...' : '시작하기'}
