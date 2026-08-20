@@ -1,10 +1,17 @@
 import { useEffect, useState } from 'react'
-import { loadRoomSelections } from '../lib/calendarData'
+import { loadRoomSelections, formatResponseCount } from '../lib/calendarData'
 import ResultsCalendarView from './ResultsCalendarView'
 import ResultsListView from './ResultsListView'
 
-function Results({ roomCode, onBack, onChangeName }) {
-  const [viewMode, setViewMode] = useState('calendar')
+function Results({
+  roomCode,
+  roomTitle,
+  expectedCount,
+  initialViewMode = 'calendar',
+  onBack,
+  onChangeName,
+}) {
+  const [viewMode, setViewMode] = useState(initialViewMode)
   const [allSelections, setAllSelections] = useState({})
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState(null)
@@ -56,10 +63,15 @@ function Results({ roomCode, onBack, onChangeName }) {
           ◀ 입력으로 돌아가기
         </button>
       </div>
-      <p className="participants-summary">
-        참여자 {participants.length}명
-        {participants.length > 0 && <>: {participants.join(', ')}</>}
-      </p>
+      <div className="room-header">
+        <h2 className="room-title">{roomTitle}</h2>
+        <p className="room-response-count">
+          {formatResponseCount(participants.length, expectedCount)}
+        </p>
+      </div>
+      {participants.length > 0 && (
+        <p className="participants-summary">참여자: {participants.join(', ')}</p>
+      )}
       <div className="mode-bar">
         <button
           type="button"

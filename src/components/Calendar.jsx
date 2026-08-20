@@ -9,9 +9,10 @@ import {
   deleteSelection,
   formatDate,
   buildMonthGrid,
+  formatResponseCount,
 } from '../lib/calendarData'
 
-function Calendar({ roomCode, name, onChangeName, onShowResults }) {
+function Calendar({ roomCode, roomTitle, expectedCount, name, onChangeName, onShowResults }) {
   const [allSelections, setAllSelections] = useState({})
   const [loading, setLoading] = useState(true)
   const [loadError, setLoadError] = useState(null)
@@ -47,6 +48,8 @@ function Calendar({ roomCode, name, onChangeName, onShowResults }) {
   }
 
   const mySelections = allSelections[name] || {}
+  const respondedCount = Object.keys(allSelections).length
+  const allResponded = Boolean(expectedCount) && respondedCount >= expectedCount
 
   const today = new Date()
   const year = viewDate.getFullYear()
@@ -118,10 +121,22 @@ function Calendar({ roomCode, name, onChangeName, onShowResults }) {
         <span className="name-badge-text">
           <strong>{name}</strong> 님 일정
         </span>
-        <button type="button" className="top-nav-btn primary" onClick={onShowResults}>
+        <button type="button" className="top-nav-btn primary" onClick={() => onShowResults()}>
           결과 보기
         </button>
       </div>
+      <div className="room-header">
+        <h2 className="room-title">{roomTitle}</h2>
+        <p className="room-response-count">{formatResponseCount(respondedCount, expectedCount)}</p>
+      </div>
+      {allResponded && (
+        <div className="all-responded-banner">
+          <p>참여자 {expectedCount}명이 모두 응답했어요!</p>
+          <button type="button" onClick={() => onShowResults('list')}>
+            결과 보기
+          </button>
+        </div>
+      )}
       <button type="button" className="copy-link-btn" onClick={handleCopyLink}>
         {linkCopied ? '복사됨 ✓' : '🔗 링크 복사'}
       </button>

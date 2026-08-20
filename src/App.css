@@ -45,6 +45,140 @@
   border-color: var(--accent-border);
 }
 
+.name-form button:disabled {
+  opacity: 0.6;
+  cursor: default;
+}
+
+.name-form-notice {
+  font-size: 14px;
+  color: #b45309;
+  background: rgba(180, 83, 9, 0.1);
+  border-radius: 8px;
+  padding: 8px 14px;
+  max-width: 320px;
+}
+
+.name-confirm {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 20px;
+  max-width: 340px;
+  text-align: center;
+}
+
+.name-confirm h1 {
+  font-size: 22px;
+  margin: 0;
+}
+
+.name-confirm-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  width: 100%;
+}
+
+.name-confirm-actions button {
+  font-size: 15px;
+  font-family: inherit;
+  font-weight: 600;
+  padding: 12px 20px;
+  min-height: 44px;
+  border-radius: 10px;
+  cursor: pointer;
+  border: 2px solid transparent;
+  transition: border-color 0.2s;
+}
+
+.name-confirm-self {
+  color: var(--accent);
+  background: var(--accent-bg);
+  border-color: var(--accent-border);
+}
+
+.name-confirm-self:hover {
+  border-color: var(--accent);
+}
+
+.name-confirm-other {
+  color: var(--text-h);
+  background: none;
+  border-color: var(--border);
+}
+
+.name-confirm-other:hover {
+  border-color: var(--accent-border);
+}
+
+.home-create-form {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  width: 100%;
+  max-width: 340px;
+}
+
+.home-field {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  text-align: left;
+  font-size: 14px;
+  color: var(--text);
+}
+
+.home-field input {
+  font-size: 15px;
+  padding: 10px 12px;
+  min-height: 44px;
+  border-radius: 8px;
+  border: 1px solid var(--border);
+  background: var(--bg);
+  color: var(--text-h);
+  box-sizing: border-box;
+}
+
+.home-field input:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
+
+.home-create-form-actions {
+  display: flex;
+  gap: 8px;
+}
+
+.home-create-form-actions .home-create-btn {
+  width: auto;
+  flex: 2;
+}
+
+.home-back-btn {
+  flex: 1;
+  font-size: 15px;
+  font-family: inherit;
+  padding: 10px 16px;
+  min-height: 44px;
+  border-radius: 10px;
+  border: 1px solid var(--border);
+  background: none;
+  color: var(--text-h);
+  cursor: pointer;
+  transition: border-color 0.2s;
+}
+
+.home-back-btn:hover {
+  border-color: var(--accent-border);
+}
+
+.home-create-btn:disabled,
+.home-back-btn:disabled {
+  opacity: 0.6;
+  cursor: default;
+}
+
 .home {
   display: flex;
   flex-direction: column;
@@ -218,6 +352,66 @@
 .name-badge-text strong {
   color: var(--accent);
   font-weight: 700;
+}
+
+.room-header {
+  width: 100%;
+  margin: 2px 0 16px;
+  text-align: left;
+}
+
+.room-title {
+  font-size: 19px;
+  font-weight: 700;
+  color: var(--text-h);
+  margin: 0 0 4px;
+}
+
+.room-response-count {
+  font-size: 13px;
+  color: var(--text);
+  margin: 0;
+}
+
+.all-responded-banner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  width: 100%;
+  padding: 12px 16px;
+  margin-bottom: 16px;
+  border-radius: 10px;
+  background: var(--accent-bg);
+  border: 1px solid var(--accent-border);
+  box-sizing: border-box;
+}
+
+.all-responded-banner p {
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--text-h);
+  margin: 0;
+  text-align: left;
+}
+
+.all-responded-banner button {
+  font-size: 13px;
+  font-family: inherit;
+  font-weight: 700;
+  padding: 8px 16px;
+  min-height: 44px;
+  border-radius: 8px;
+  border: none;
+  background: #8f2fe0;
+  color: #fff;
+  cursor: pointer;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+.all-responded-banner button:hover {
+  background: #7d29c4;
 }
 
 .month-nav {

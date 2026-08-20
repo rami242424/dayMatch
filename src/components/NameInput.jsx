@@ -1,6 +1,8 @@
 import { useState } from 'react'
 
-function NameInput({ onSubmit, defaultValue = '' }) {
+const MAX_NAME_LENGTH = 10
+
+function NameInput({ onSubmit, defaultValue = '', notice = '', checking = false, error = null }) {
   const [name, setName] = useState(defaultValue)
 
   function handleSubmit(e) {
@@ -13,14 +15,19 @@ function NameInput({ onSubmit, defaultValue = '' }) {
   return (
     <form className="name-form" onSubmit={handleSubmit}>
       <h1>이름을 입력해주세요</h1>
+      {notice && <p className="name-form-notice">{notice}</p>}
       <input
         type="text"
         value={name}
         onChange={(e) => setName(e.target.value)}
         placeholder="이름"
+        maxLength={MAX_NAME_LENGTH}
         autoFocus
       />
-      <button type="submit">시작하기</button>
+      {error && <p className="status-message-error">{error}</p>}
+      <button type="submit" disabled={checking}>
+        {checking ? '확인 중...' : '시작하기'}
+      </button>
     </form>
   )
 }

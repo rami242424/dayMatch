@@ -1,4 +1,5 @@
 import { supabase } from './supabaseClient'
+import { generateRoomCode } from './roomCode'
 
 export const WEEKDAYS = ['일', '월', '화', '수', '목', '금', '토']
 
@@ -41,6 +42,50 @@ export async function upsertSelection(roomCode, name, dateStr, status) {
       { onConflict: 'room_code,name,date' },
     )
   if (error) throw error
+}
+
+// rooms 테이블에 새 방을 만들고 방 코드를 돌려줌. 코드 충돌 시 몇 차례 재시도.
+export async function createRoom(title, expectedCount) {
+  for (let attempt = 0; attempt < 5; attempt++) {
+    const code = generateRoomCode()
+    const { error } = await supabase
+      .from('rooms')
+      .insert({ code, title, expected_count: expectedCount ?? null })
+    if (!error) return code
+    if (error.code !== '23505') throw error
+  }
+  throw new Error('방 코드를 생성하지 못했어요.')
+}
+
+// 방 제목/예상 인원을 불러옴. rooms에 정보가 없거나(예: 이 기능 이전에 만들어진 방)
+// 조회 자체가 실패해도 null을 돌려주고, 호출부는 "이름 없는 약속"으로 대체함.
+export async function loadRoomInfo(roomCode) {
+  const { data, error } = await supabase
+    .from('rooms')
+    .select('title, expected_count')
+    .eq('code', roomCode)
+    .maybeSingle()
+  if (error || !data) return null
+  return { title: data.title, expectedCount: data.expected_count }
+}
+
+// 인원수가 설정된 방이면 "응답 3/4", 아니면 "3명 응답"으로 표시.
+export function formatResponseCount(respondedCount, expectedCount) {
+  return expectedCount ? `응답 ${respondedCount}/${expectedCount}` : `${respondedCount}명 응답`
+}
+
+// 이 방에 해당 이름으로 저장된 선택이 이미 있는지 확인.
+// (선택을 하나도 안 한 사람은 행이 없으므로 감지되지 않음 — 현재 데이터 모델의 한계)
+export async function checkNameTaken(roomCode, name) {
+  const { data, error } = await supabase
+    .from('selections')
+    .select('name')
+    .eq('room_code', roomCode)
+    .eq('name', name)
+    .limit(1)
+
+  if (error) throw error
+  return data.length > 0
 }
 
 // 선택 해제 시 그 행을 삭제.
