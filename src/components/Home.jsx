@@ -2,6 +2,7 @@ import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import {
   createRoom,
+  loadRoomInfo,
   getRecentRooms,
   removeRecentRoom,
   formatRelativeTime,
@@ -12,6 +13,8 @@ const MAX_TITLE_LENGTH = 30
 function Home() {
   const navigate = useNavigate()
   const [codeInput, setCodeInput] = useState('')
+  const [joining, setJoining] = useState(false)
+  const [joinError, setJoinError] = useState(null)
   const [showCreateForm, setShowCreateForm] = useState(false)
   const [title, setTitle] = useState('')
   const [expectedCount, setExpectedCount] = useState('')
@@ -24,11 +27,25 @@ function Home() {
     setRecentRooms(getRecentRooms())
   }
 
-  function handleJoin(e) {
+  async function handleJoin(e) {
     e.preventDefault()
     const trimmed = codeInput.trim().toLowerCase()
     if (!trimmed) return
-    navigate(`/r/${trimmed}`)
+
+    setJoining(true)
+    setJoinError(null)
+    try {
+      const info = await loadRoomInfo(trimmed)
+      if (!info) {
+        setJoinError('존재하지 않는 코드예요. 코드를 다시 확인해주세요.')
+        setJoining(false)
+        return
+      }
+      navigate(`/r/${trimmed}`)
+    } catch {
+      setJoinError('코드를 확인하지 못했어요. 다시 시도해주세요.')
+      setJoining(false)
+    }
   }
 
   async function handleCreateSubmit(e) {
@@ -106,9 +123,13 @@ function Home() {
           value={codeInput}
           onChange={(e) => setCodeInput(e.target.value)}
           placeholder="코드 입력"
+          disabled={joining}
         />
-        <button type="submit">참여하기</button>
+        <button type="submit" disabled={joining}>
+          {joining ? '확인 중...' : '참여하기'}
+        </button>
       </form>
+      {joinError && <p className="status-message-error">{joinError}</p>}
       {recentRooms.length > 0 && (
         <div className="recent-rooms">
           <h2 className="recent-rooms-title">최근 참여한 약속</h2>
