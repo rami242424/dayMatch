@@ -229,6 +229,14 @@ export const STATUS_MARK = { no: '✕', ok: '△', good: '◎' }
 <meta name="theme-color" content="#ffffff" />
 ```
 
+**5. Supabase 테이블에 RLS가 꺼져 있어 anon key로 전체 데이터 열람·수정·삭제가 가능했음**
+
+- 문제: publishable key(anon key)는 브라우저 코드에 그대로 노출되는 값인데, 테이블의 RLS(Row Level Security)가 꺼져 있어서 이 키만 있으면 `rooms`/`selections` 전체를 조회하거나 임의로 수정·삭제할 수 있었습니다.
+- 원인: 개발 초기에 빠르게 붙이려고 RLS를 켜지 않은 채로 두었습니다.
+- 해결: 두 테이블 모두 RLS를 켜고, 앱이 실제로 쓰는 동작만 정책으로 허용했습니다. `rooms`는 select/insert만, `selections`은 select/insert/update/delete를 허용합니다.
+
+이 앱은 로그인이 없어서 "방 코드를 아는 사람 = 참여자"가 보안 모델입니다. 그래서 같은 방 안에서 코드를 아는 사람들끼리 서로의 선택을 볼 수 있는 것 자체는 RLS로 막을 수 있는 문제가 아니라 원래 의도한 설계입니다. RLS로 막은 건 "방 코드를 모르는 제3자가 anon key만으로 전체 테이블에 접근하는 것"입니다.
+
 ---
 
 ## 🚀 시작하기
