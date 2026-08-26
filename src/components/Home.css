@@ -12,10 +12,13 @@
 
 /* 화면 상단에만 깔리는 연한 그라데이션.
    position: fixed 대신 absolute + 음수 여백으로 처리해 인앱 브라우저에서도 동일하게 보입니다. */
-.hm-screen::before {
+#center:has(.hm-screen) {
+  position: relative;
+}
+#center:has(.hm-screen)::before {
   content: '';
   position: absolute;
-  top: -140px;
+  top: 0;
   left: -80px;
   right: -80px;
   height: 320px;
@@ -28,15 +31,7 @@
   pointer-events: none;
   z-index: 0;
 }
-
-/* 홈 화면(#center 안에 .hm-screen이 있을 때)만 세로 중앙 정렬 대신 위쪽 정렬로 바꿔서
-   상단 그라데이션이 화면 맨 위부터 이어지게 함. App.css의 #center 원본 규칙은 다른 화면에 그대로 유지됨. */
-#center:has(.hm-screen) {
-  place-content: flex-start;
-  padding-top: 48px;
-}
-
-.hm-screen > * {
+#center:has(.hm-screen) > * {
   position: relative;
   z-index: 1;
 }
