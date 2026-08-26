@@ -1,0 +1,14 @@
+{
+  "name": "dayMatch",
+  "short_name": "dayMatch",
+  "description": "각자 가능한 날짜를 표시하면, 모두가 가능한 날을 찾아주는 일정 조율 웹앱",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#8f2fe0",
+  "icons": [
+    { "src": "/icon-192.png", "sizes": "192x192", "type": "image/png" },
+    { "src": "/icon-512.png", "sizes": "512x512", "type": "image/png" },
+    { "src": "/icon-maskable-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" }
+  ]
+}
