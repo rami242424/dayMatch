@@ -1,44 +1,12 @@
 import { useState } from 'react'
-import { collectVotedDates, formatDateLabel, getDateMarks } from '../lib/calendarData'
+import { formatDateLabel } from '../lib/calendarData'
+import { GROUPS, buildResultRows } from '../lib/resultRows'
 import DateDetail from './DateDetail'
-
-const GROUPS = [
-  { key: 'all-ok', label: '전원 가능', match: (noCount) => noCount === 0 },
-  { key: 'one-no', label: '1명만 빼고 가능', match: (noCount) => noCount === 1 },
-  { key: 'many-no', label: '2명 이상 불가', match: (noCount) => noCount >= 2 },
-]
 
 const VISIBLE_PER_GROUP = 3
 
-function buildRows(allSelections) {
-  const rows = [...collectVotedDates(allSelections)].map((dateStr) => {
-    const marks = getDateMarks(allSelections, dateStr)
-    const goodCount = marks.good.length
-    const okCount = marks.ok.length
-    const noCount = marks.no.length
-    return {
-      dateStr,
-      marks,
-      goodCount,
-      okCount,
-      noCount,
-      availableCount: goodCount + okCount,
-      respondedCount: goodCount + okCount + noCount,
-    }
-  })
-
-  rows.sort((a, b) => {
-    if (b.availableCount !== a.availableCount) return b.availableCount - a.availableCount
-    if (b.goodCount !== a.goodCount) return b.goodCount - a.goodCount
-    if (b.okCount !== a.okCount) return b.okCount - a.okCount
-    return a.dateStr < b.dateStr ? -1 : 1
-  })
-
-  return rows
-}
-
 function ResultsListView({ allSelections }) {
-  const rows = buildRows(allSelections)
+  const rows = buildResultRows(allSelections)
   const totalParticipants = Object.keys(allSelections).length
   const [expandedGroups, setExpandedGroups] = useState({})
   const [expandedDate, setExpandedDate] = useState(null)
