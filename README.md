@@ -48,6 +48,7 @@ https://day-match-lime.vercel.app
 | UI | ![React](https://img.shields.io/badge/React_19-61DAFB?style=flat-square&logo=react&logoColor=black) | 선택 상태를 컴포넌트 단위로 관리 |
 | 라우팅 | ![React Router](https://img.shields.io/badge/React_Router-CA4245?style=flat-square&logo=reactrouter&logoColor=white) | 방마다 고유 URL(`/r/:code`)이 필요 |
 | 백엔드 / DB | ![Supabase](https://img.shields.io/badge/Supabase-3FCF8E?style=flat-square&logo=supabase&logoColor=white) | 서버를 직접 만들지 않고 Postgres + 자동 생성 REST API 사용 |
+| 테스트 | ![Vitest](https://img.shields.io/badge/Vitest-6E9F18?style=flat-square&logo=vitest&logoColor=white) | 순수 함수 로직을 빠르게 검증하기 위해 사용 |
 | 배포 | ![Vercel](https://img.shields.io/badge/Vercel-000000?style=flat-square&logo=vercel&logoColor=white) | GitHub 푸시 시 자동 배포 |
 
 > 상태 관리 라이브러리(Redux, Zustand 등)는 쓰지 않았습니다. 공유해야 할 상태가 방 하나의 선택 데이터뿐이라 `useState` 와 props 전달로 충분했습니다.
@@ -188,6 +189,22 @@ export const STATUS_MARK = { no: '✕', ok: '△', good: '◎' }
 ```jsx
 <span className="mode-mark">{STATUS_MARK[status]}</span>
 {STATUS_LABEL[status]}
+```
+
+### 7. 테스트 가능하도록 순수 함수 분리
+
+날짜 계산이나 정렬 로직처럼 Supabase에 의존하지 않는 함수들을 `dateHelpers.js`와 `resultRows.js`로 분리하고, Vitest로 단위 테스트 26개를 붙였습니다. 특히 "안 되는 날은 필터"로만 쓰고 점수에 합산하지 않는 정렬 로직(`resultRows.js`)은 말로 설명하기는 쉬워도 동점 처리 같은 경계 조건을 눈으로 확인하긴 어려워서, 테스트로 직접 검증했습니다.
+
+```js
+it('가능 인원과 좋아요 수까지 같으면 괜찮아요(okCount)로 다음 비교한다', () => {
+  const allSelections = {
+    지민: { '2026-09-01': 'ok', '2026-09-02': 'no' },
+    서연: { '2026-09-01': 'ok', '2026-09-02': 'ok' },
+  }
+  const rows = buildResultRows(allSelections)
+  expect(rows[0].dateStr).toBe('2026-09-01')
+  expect(rows[1].dateStr).toBe('2026-09-02')
+})
 ```
 
 ---
